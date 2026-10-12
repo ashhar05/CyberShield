@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CyberShield helps review potentially harmful online messages.">
+    <title>CyberShield | Safer Digital Conversations</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar">
+        <a class="logo" href="#">CyberShield<span>.</span></a>
+        <p class="nav-tagline">AI-assisted cyberbullying analysis</p>
+    </header>
+
+    <main class="hero">
+        <p class="eyebrow">YOUR DIGITAL SAFETY TOOLKIT</p>
+
+        <h1>Make online spaces<br><span>safer for everyone.</span></h1>
+
+        <p class="intro">
+            Review potentially harmful messages, analyze conversations,
+            and organize evidence with an AI-assisted workflow.
+        </p>
+
+        <section class="analyzer">
+            <div class="section-heading">
+                <div>
+                    <h2>Analyze a message</h2>
+                    <p>Start by pasting text from a conversation.</p>
+                </div>
+                <span class="status">TEXT ANALYSIS</span>
+            </div>
+
+            <label for="message">Conversation text</label>
+            <textarea
+                id="message"
+                placeholder="Paste a message or conversation here..."
+                rows="6"
+            ></textarea>
+
+            <div class="form-footer">
+                <p id="char-count">0 characters</p>
+                <button id="analyze-btn" type="button">Analyze message →</button>
+            </div>
+
+            <p id="feedback" class="feedback" aria-live="polite"></p>
+        </section>
+
+        <p class="disclaimer">
+            CyberShield is an assistive tool. Its results should not be treated
+            as a definitive judgment about a person or conversation.
+        </p>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
