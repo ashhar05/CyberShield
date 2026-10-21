@@ -207,3 +207,25 @@ button:hover {
         width: 100%;
     }
 }
+.results {
+    margin-top: 24px;
+    padding: 20px;
+    border: 1px solid #2b4059;
+    border-radius: 12px;
+    background: #091522;
+}
+
+.results h3 {
+    margin-top: 0;
+    font-size: 1.05rem;
+}
+
+.results p {
+    color: #a7b7cb;
+    line-height: 1.6;
+}
+
+.result-note {
+    margin-bottom: 0;
+    font-size: 0.82rem;
+}
