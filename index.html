@@ -44,13 +44,20 @@
                 <p id="char-count">0 characters</p>
                 <button id="analyze-btn" type="button">Analyze message →</button>
             </div>
-
             <p id="feedback" class="feedback" aria-live="polite"></p>
+
             <div id="results" class="results" hidden>
     <h3>Analysis overview</h3>
+
     <p id="result-message"></p>
+
+    <!-- JavaScript will insert the seven category scores here -->
+    <div id="analysis-results"></div>
+
     <p class="result-note">
-        Automated analysis will be connected in a later step.
+        These are model-generated scores, not confirmed probabilities
+        of cyberbullying. Review the message and its context before
+        drawing conclusions.
     </p>
 </div>
         </section>
