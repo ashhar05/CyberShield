@@ -25,6 +25,35 @@
         </p>
 
         <section class="analyzer">
+
+<div class="upload-section">
+    <div class="section-heading">
+        <div>
+            <h2>Upload a screenshot</h2>
+            <p>Extract conversation text from an image.</p>
+        </div>
+        <span class="status">OCR EXTRACTION</span>
+    </div>
+
+    <label for="screenshot">Choose screenshot</label>
+
+    <input
+        type="file"
+        id="screenshot"
+        accept="image/png, image/jpeg, image/webp"
+    >
+
+    <div id="image-preview-container" hidden>
+        <img id="image-preview" alt="Screenshot preview">
+    </div>
+
+    <button id="extract-btn" type="button" disabled>
+        Extract text →
+    </button>
+
+    <p id="ocr-feedback" class="feedback" aria-live="polite"></p>
+</div>
+
             <div class="section-heading">
                 <div>
                     <h2>Analyze a message</h2>

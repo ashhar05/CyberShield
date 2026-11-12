@@ -6,6 +6,11 @@ const feedback = document.getElementById("feedback");
 const results = document.getElementById("results");
 const resultMessage = document.getElementById("result-message");
 const analysisResults = document.getElementById("analysis-results");
+const screenshotInput = document.getElementById("screenshot");
+const imagePreview = document.getElementById("image-preview");
+const imagePreviewContainer = document.getElementById("image-preview-container");
+const extractButton = document.getElementById("extract-btn");
+const ocrFeedback = document.getElementById("ocr-feedback");
 
 // Convert model category names into readable labels
 const categoryNames = {
@@ -136,3 +141,86 @@ analyzeButton.addEventListener("click", async function () {
     }
 });
 
+// Handle screenshot selection
+screenshotInput.addEventListener("change", function () {
+
+    const file = screenshotInput.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    // Display image preview
+    const imageURL = URL.createObjectURL(file);
+
+    imagePreview.src = imageURL;
+    imagePreviewContainer.hidden = false;
+
+    // Enable extraction button
+    extractButton.disabled = false;
+
+    ocrFeedback.textContent = "";
+});
+
+// Handle OCR extraction
+extractButton.addEventListener("click", async function () {
+
+    const file = screenshotInput.files[0];
+
+    if (!file) {
+        ocrFeedback.textContent = "Please select an image first.";
+        return;
+    }
+
+    // Prepare image for upload
+    const formData = new FormData();
+    formData.append("image", file);
+
+    extractButton.disabled = true;
+    extractButton.textContent = "Extracting text...";
+    ocrFeedback.textContent = "";
+
+    try {
+
+        const response = await fetch("/api/extract", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "OCR extraction failed.");
+        }
+
+        // Put extracted text into the existing textarea
+        messageInput.value = data.extracted_text;
+
+        // Update character counter
+        charCount.textContent =
+            `${data.extracted_text.length} characters`;
+
+        // Hide previous analysis results
+        results.hidden = true;
+
+        ocrFeedback.textContent = "Text extracted successfully! Review it below.";
+
+        // Bring the user to the extracted text
+        messageInput.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    } catch (error) {
+
+        ocrFeedback.textContent =
+            error.message || "Could not extract text from the image.";
+
+        console.error("OCR error:", error);
+
+    } finally {
+
+        extractButton.disabled = false;
+        extractButton.textContent = "Extract text →";
+    }
+});

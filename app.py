@@ -1,4 +1,6 @@
 
+from ocr import extract_text
+from PIL import Image
 from flask import Flask, request, jsonify, send_from_directory
 
 # Import our ML prediction function
@@ -62,6 +64,46 @@ def analyze_message():
         return jsonify({
             "status": "error",
             "message": "Something went wrong during AI analysis."
+        }), 500
+
+
+@app.route("/api/extract", methods=["POST"])
+def extract_image_text():
+
+    # Check whether an image was uploaded
+    if "image" not in request.files:
+        return jsonify({
+            "status": "error",
+            "message": "No image uploaded."
+        }), 400
+
+    image_file = request.files["image"]
+
+    # Check whether the selected file is empty
+    if image_file.filename == "":
+        return jsonify({
+            "status": "error",
+            "message": "Please select an image."
+        }), 400
+
+    try:
+        # Open uploaded image using Pillow
+        image = Image.open(image_file.stream)
+
+        # Extract text using our OCR function
+        extracted_text = extract_text(image)
+
+        return jsonify({
+            "status": "success",
+            "extracted_text": extracted_text
+        })
+
+    except Exception as error:
+        print("OCR error:", error)
+
+        return jsonify({
+            "status": "error",
+            "message": "Could not extract text from this image."
         }), 500
 
 
