@@ -11,6 +11,11 @@ const imagePreview = document.getElementById("image-preview");
 const imagePreviewContainer = document.getElementById("image-preview-container");
 const extractButton = document.getElementById("extract-btn");
 const ocrFeedback = document.getElementById("ocr-feedback");
+const downloadReportButton = document.getElementById("download-report-btn");
+const reportFeedback = document.getElementById("report-feedback");
+
+// Store the latest successful analysis
+let latestAnalysis = null;
 
 // Convert model category names into readable labels
 const categoryNames = {
@@ -124,6 +129,7 @@ analyzeButton.addEventListener("click", async function () {
 
         // Display all seven scores returned by Flask
         displayResults(data.analysis);
+        latestAnalysis = data.analysis;
 
         results.hidden = false;
 
@@ -222,5 +228,82 @@ extractButton.addEventListener("click", async function () {
 
         extractButton.disabled = false;
         extractButton.textContent = "Extract text →";
+    }
+});
+
+// Handle PDF report download
+downloadReportButton.addEventListener("click", async function () {
+
+    if (!latestAnalysis) {
+        reportFeedback.textContent =
+            "Please analyse a message before generating a report.";
+        return;
+    }
+
+    const message = messageInput.value.trim();
+
+    if (!message) {
+        reportFeedback.textContent =
+            "No conversation text available.";
+        return;
+    }
+
+    downloadReportButton.disabled = true;
+    downloadReportButton.textContent = "Generating report...";
+    reportFeedback.textContent = "";
+
+    try {
+
+        const response = await fetch("/api/report", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: message,
+                analysis: latestAnalysis
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                errorData.message || "PDF generation failed."
+            );
+        }
+
+        // Receive the PDF as a browser Blob
+        const pdfBlob = await response.blob();
+
+        // Create a temporary download URL
+        const downloadURL = URL.createObjectURL(pdfBlob);
+
+        // Create a temporary download link
+        const link = document.createElement("a");
+        link.href = downloadURL;
+        link.download = "CyberShield_Analysis_Report.pdf";
+
+        // Trigger the download
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        // Release the temporary URL
+        URL.revokeObjectURL(downloadURL);
+
+        reportFeedback.textContent =
+            "Your PDF report has been generated successfully!";
+
+    } catch (error) {
+
+        reportFeedback.textContent =
+            error.message || "Could not generate the PDF report.";
+
+        console.error("PDF report error:", error);
+
+    } finally {
+
+        downloadReportButton.disabled = false;
+        downloadReportButton.textContent = "Download PDF Report ↓";
     }
 });

@@ -2,9 +2,13 @@
 from ocr import extract_text
 from PIL import Image
 from flask import Flask, request, jsonify, send_from_directory
-
 # Import our ML prediction function
 from model import analyze_text
+import io
+import json
+import tempfile
+from flask import send_file
+from report import generate_report
 
 app = Flask(__name__)
 
@@ -104,6 +108,58 @@ def extract_image_text():
         return jsonify({
             "status": "error",
             "message": "Could not extract text from this image."
+        }), 500
+
+@app.route("/api/report", methods=["POST"])
+def download_report():
+
+    # Receive data from the frontend
+    data = request.get_json(silent=True) or {}
+
+    message = data.get("message", "")
+    analysis = data.get("analysis", {})
+
+    # Validate incoming data
+    if not isinstance(message, str) or not message.strip():
+        return jsonify({
+            "status": "error",
+            "message": "No conversation text provided."
+        }), 400
+
+    if not isinstance(analysis, dict) or not analysis:
+        return jsonify({
+            "status": "error",
+            "message": "No analysis results provided."
+        }), 400
+
+    try:
+        # Create an in-memory PDF buffer
+        pdf_buffer = io.BytesIO()
+
+        # Generate the PDF using actual AI results
+        generate_report(
+            message=message,
+            analysis=analysis,
+            output_path=pdf_buffer
+        )
+
+        # Move to the beginning of the PDF buffer
+        pdf_buffer.seek(0)
+
+        # Send PDF to the browser as a download
+        return send_file(
+            pdf_buffer,
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name="CyberShield_Analysis_Report.pdf"
+        )
+
+    except Exception as error:
+        print("PDF generation error:", error)
+
+        return jsonify({
+            "status": "error",
+            "message": "Could not generate the PDF report."
         }), 500
 
 
