@@ -1,0 +1,80 @@
+# CYBERSHIELD - LOCAL SETUP GUIDE
+# Platform: macOS
+# Backend: Python + Flask
+# Frontend: HTML, CSS, JavaScript
+# Port: 5000
+
+========================================
+1. OPEN PROJECT
+========================================
+
+cd ~/Documents/CyberShield
+
+========================================
+2. ACTIVATE VIRTUAL ENVIRONMENT
+========================================
+
+source .venv/bin/activate
+
+========================================
+3. INSTALL DEPENDENCIES
+========================================
+
+python -m pip install -r requirements.txt
+
+(Note: Only necessary when setting up the environment
+or when dependencies have been updated.)
+
+========================================
+4. START THE FLASK SERVER
+========================================
+
+python app.py
+
+========================================
+5. OPEN PROJECT IN BROWSER
+========================================
+
+Main Website:
+http://127.0.0.1:5000
+
+Backend Health Check:
+http://127.0.0.1:5000/api/health
+
+========================================
+6. STOP THE SERVER
+========================================
+
+Press CTRL + C in the terminal.
+
+========================================
+7. DEACTIVATE VIRTUAL ENVIRONMENT
+========================================
+
+deactivate
+
+========================================
+QUICK START (EVERYDAY USE)
+========================================
+
+1. Open VS Code.
+2. Open CyberShield folder.
+3. Open Terminal.
+4. Execute:
+
+cd ~/Documents/CyberShield
+source .venv/bin/activate
+python app.py
+
+5. Open http://127.0.0.1:5000
+
+========================================
+IMPORTANT NOTES
+========================================
+
+- Keep the terminal running while using the website.
+- Do not close the terminal while Flask is running.
+- requirements.txt contains project dependencies.
+- .venv contains the virtual environment.
+- app.py is the Flask application entry point.
+- Server runs locally on port 5000.
