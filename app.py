@@ -1,6 +1,6 @@
 
 from ocr import extract_text
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from flask import Flask, request, jsonify, send_from_directory
 # Import our ML prediction function
 from model import analyze_text
@@ -72,6 +72,8 @@ def analyze_message():
 
 
 @app.route("/api/extract", methods=["POST"])
+
+
 def extract_image_text():
 
     # Check whether an image was uploaded
@@ -97,10 +99,23 @@ def extract_image_text():
         # Extract text using our OCR function
         extracted_text = extract_text(image)
 
+        # Check whether OCR found any readable text
+        if not extracted_text.strip():
+            return jsonify({
+                "status": "error",
+                "message": "No readable text found in the uploaded image."
+            }), 422
+
         return jsonify({
             "status": "success",
             "extracted_text": extracted_text
         })
+
+    except UnidentifiedImageError:
+        return jsonify({
+            "status": "error",
+            "message": "Invalid image file. Please upload a valid screenshot."
+        }), 400
 
     except Exception as error:
         print("OCR error:", error)
