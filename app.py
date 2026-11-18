@@ -28,6 +28,10 @@ def javascript():
     return send_from_directory(".", "script.js")
 
 
+@app.route("/cybershield-logo.png")
+def serve_logo():
+    return send_from_directory(".", "cybershield-logo.png")
+
 @app.route("/api/health", methods=["GET"])
 def health_check():
     return jsonify({
