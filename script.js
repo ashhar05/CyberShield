@@ -58,53 +58,100 @@ contextualForm.reset();
 enhancedAnalysisButton.textContent = "Get Enhanced Analysis →";
 });
 
-// Display the model's category scores
+// Display the model's category scores as speedometer gauges
 function displayResults(analysis) {
 
     // Remove results from any previous analysis
     analysisResults.replaceChildren();
 
+    // SVG namespace required for creating SVG elements
+    const svgNS = "http://www.w3.org/2000/svg";
+
     // Loop through all seven categories
     for (const category in analysis) {
 
-        const score = analysis[category];
-        const percentage = score * 100;
+        const score = Number(analysis[category]);
 
-        // Create a container for this category
+        // Convert model score (0-1) into percentage (0-100)
+        const percentage = Math.max(
+            0,
+            Math.min(100, (Number.isFinite(score) ? score : 0) * 100)
+        );
+
+        // Create the speedometer card
         const categoryBox = document.createElement("div");
-        categoryBox.className = "category-result";
+        categoryBox.className = "gauge-card";
 
-        // Create the category name
+        // Create an SVG speedometer
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", "0 0 240 210");
+        svg.setAttribute("class", "gauge-svg");
+        svg.setAttribute("role", "img");
+        svg.setAttribute(
+            "aria-label",
+            `${categoryNames[category] || category}: ${percentage.toFixed(2)} percent`
+        );
+
+        // Curved 270-degree speedometer path
+        // Starts at the lower-left and finishes at the lower-right
+        const gaugePath =
+            "M 44 174 A 100 100 0 1 1 196 174";
+
+        // Create the dark background arc
+        const track = document.createElementNS(svgNS, "path");
+        track.setAttribute("d", gaugePath);
+        track.setAttribute("class", "gauge-track");
+        track.setAttribute("pathLength", "100");
+
+        // Create the turquoise progress arc
+        const progress = document.createElementNS(svgNS, "path");
+        progress.setAttribute("d", gaugePath);
+        progress.setAttribute("class", "gauge-progress");
+        progress.setAttribute("pathLength", "100");
+
+        // Start with an empty progress arc
+        progress.style.strokeDasharray = "0 100";
+
+        // Create the large percentage text
+        const valueText = document.createElementNS(svgNS, "text");
+        valueText.setAttribute("x", "120");
+        valueText.setAttribute("y", "122");
+        valueText.setAttribute("class", "gauge-value");
+        valueText.textContent = `${percentage.toFixed(2)}%`;
+
+        // Create the small description below the percentage
+        const caption = document.createElementNS(svgNS, "text");
+        caption.setAttribute("x", "120");
+        caption.setAttribute("y", "145");
+        caption.setAttribute("class", "gauge-caption");
+        caption.textContent = "MODEL SCORE";
+
+        // Assemble the SVG
+        svg.appendChild(track);
+        svg.appendChild(progress);
+        svg.appendChild(valueText);
+        svg.appendChild(caption);
+
+        // Create the category name beneath the speedometer
         const categoryLabel = document.createElement("p");
-        categoryLabel.className = "category-label";
+        categoryLabel.className = "gauge-label";
         categoryLabel.textContent =
             categoryNames[category] || category;
 
-        // Create the score text
-        const scoreText = document.createElement("span");
-        scoreText.className = "category-score";
-        scoreText.textContent = `${percentage.toFixed(2)} / 100`;
-
-        // Create the progress bar background
-        const progressBackground = document.createElement("div");
-        progressBackground.className = "progress-background";
-
-        // Create the actual progress bar
-        const progressBar = document.createElement("div");
-        progressBar.className = "progress-bar";
-
-        progressBar.style.width = `${percentage}%`;
-
-        // Assemble the progress bar
-        progressBackground.appendChild(progressBar);
-
-        // Assemble the category result
+        // Assemble the speedometer card
+        categoryBox.appendChild(svg);
         categoryBox.appendChild(categoryLabel);
-        categoryBox.appendChild(scoreText);
-        categoryBox.appendChild(progressBackground);
 
-        // Add it to the results section
+        // Add the card to the analysis dashboard
         analysisResults.appendChild(categoryBox);
+
+        // Animate the turquoise arc to the model score
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                progress.style.strokeDasharray =
+                    `${percentage} 100`;
+            });
+        });
     }
 }
 
@@ -148,11 +195,14 @@ analyzeButton.addEventListener("click", async function () {
         resultMessage.textContent =
             `Analysis completed for ${data.character_count} characters.`;
 
-        // Display all seven scores returned by Flask
-        displayResults(data.analysis);
+        // Store the latest successful analysis
         latestAnalysis = data.analysis;
 
+        // Show the results section before drawing the gauges
         results.hidden = false;
+
+        // Display all seven speedometers
+        displayResults(data.analysis);
 
     } catch (error) {
 
