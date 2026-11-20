@@ -14,6 +14,18 @@ const ocrFeedback = document.getElementById("ocr-feedback");
 const downloadReportButton = document.getElementById("download-report-btn");
 const reportFeedback = document.getElementById("report-feedback");
 
+// CyberShield Enhanced Analysis elements
+const enhancedAnalysisButton = document.getElementById("enhanced-analysis-btn");
+const contextualQuestionnaire = document.getElementById("contextual-questionnaire");
+const contextualForm = document.getElementById("contextual-form");
+const contextualFeedback = document.getElementById("contextual-feedback");
+const contextualResults = document.getElementById("contextual-results");
+const contextualAssessmentText = document.getElementById("contextual-assessment-text");
+const contextualObservations = document.getElementById("contextual-observations");
+const contextualDisclaimer = document.getElementById("contextual-disclaimer");
+const submitContextButton = document.getElementById("submit-context-btn");
+
+
 // Store the latest successful analysis
 let latestAnalysis = null;
 
@@ -35,6 +47,15 @@ messageInput.addEventListener("input", function () {
     charCount.textContent = `${text.length} characters`;
     feedback.textContent = "";
     results.hidden = true;
+    // Clear analysis associated with the previous message
+latestAnalysis = null;
+
+// Reset the optional contextual assessment
+contextualQuestionnaire.hidden = true;
+contextualResults.hidden = true;
+contextualFeedback.textContent = "";
+contextualForm.reset();
+enhancedAnalysisButton.textContent = "Get Enhanced Analysis →";
 });
 
 // Display the model's category scores
@@ -305,5 +326,125 @@ downloadReportButton.addEventListener("click", async function () {
 
         downloadReportButton.disabled = false;
         downloadReportButton.textContent = "Download PDF Report ↓";
+    }
+});
+
+// Show or hide the optional contextual questionnaire
+enhancedAnalysisButton.addEventListener("click", function () {
+
+    contextualQuestionnaire.hidden = !contextualQuestionnaire.hidden;
+
+    // Change button text based on questionnaire visibility
+    enhancedAnalysisButton.textContent = contextualQuestionnaire.hidden
+        ? "Get Enhanced Analysis →"
+        : "Hide Questionnaire ↑";
+
+    if (!contextualQuestionnaire.hidden) {
+        contextualQuestionnaire.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+    }
+});
+
+// Handle contextual questionnaire submission
+contextualForm.addEventListener("submit", async function (event) {
+
+    // Prevent the browser from refreshing the page
+    event.preventDefault();
+
+    // Ensure the initial analysis has been completed
+    if (!latestAnalysis) {
+        contextualFeedback.textContent =
+            "Please analyze a message before requesting enhanced analysis.";
+        return;
+    }
+
+    // Read the current conversation text
+    const message = messageInput.value.trim();
+
+    // Collect answers from the four questions
+    const context = {
+        emotional_impact: document.getElementById("emotional-impact").value,
+        relationship: document.getElementById("relationship").value,
+        repetition: document.getElementById("repetition").value,
+        intention: document.getElementById("intention").value
+    };
+
+    // Show loading state
+    submitContextButton.disabled = true;
+    submitContextButton.textContent = "Generating assessment...";
+    contextualFeedback.textContent = "";
+    contextualResults.hidden = true;
+
+    try {
+
+        // Send message and questionnaire responses to Flask
+        const response = await fetch("/api/contextual-analyze", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: message,
+                context: context
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Contextual assessment failed."
+            );
+        }
+
+        // Read the enhanced analysis returned by Flask
+        const enhancedAnalysis = data.enhanced_analysis;
+
+        // Display the contextual interpretation
+        contextualAssessmentText.textContent =
+            enhancedAnalysis.contextual_assessment;
+
+        // Remove observations from any previous assessment
+        contextualObservations.replaceChildren();
+
+        // Display each contextual observation
+        enhancedAnalysis.contextual_observations.forEach(function (observation) {
+
+            const listItem = document.createElement("li");
+            listItem.textContent = observation;
+
+            contextualObservations.appendChild(listItem);
+        });
+
+        // Display the assessment disclaimer
+        contextualDisclaimer.textContent =
+            enhancedAnalysis.disclaimer;
+
+        // Show the completed assessment
+        contextualResults.hidden = false;
+
+        contextualFeedback.textContent =
+            "Enhanced contextual assessment completed successfully!";
+
+        contextualResults.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+
+    } catch (error) {
+
+        contextualFeedback.textContent =
+            error.message || "Could not generate contextual assessment.";
+
+        console.error("Contextual assessment error:", error);
+
+    } finally {
+
+        // Restore the submit button
+        submitContextButton.disabled = false;
+        submitContextButton.textContent =
+            "Generate Contextual Assessment →";
     }
 });

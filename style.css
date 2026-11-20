@@ -352,3 +352,178 @@ button:hover {
 .logo .logo-dot {
     color: #59A6FF;
 }
+
+/* ==========================================
+   CyberShield Enhanced Contextual Analysis
+   ========================================== */
+
+/* Main contextual assessment section */
+.contextual-section {
+    margin-top: 28px;
+    padding: 24px;
+    border: 1px solid #2a405b;
+    border-radius: 16px;
+    background: #0d1b2d;
+}
+
+/* Introductory contextual assessment card */
+.contextual-intro h3 {
+    margin: 0 0 12px;
+    color: #edf4ff;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.contextual-intro p {
+    margin-bottom: 20px;
+    color: #a7b7cb;
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+/* Enhanced Analysis button */
+#enhanced-analysis-btn {
+    padding: 12px 20px;
+    background: #3188f5;
+    color: #ffffff;
+    border-radius: 9px;
+    font-weight: 650;
+}
+
+#enhanced-analysis-btn:hover {
+    background: #4a9aff;
+}
+
+/* Contextual questionnaire */
+#contextual-questionnaire {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #2a405b;
+}
+
+#contextual-questionnaire h3 {
+    margin: 0 0 12px;
+    color: #edf4ff;
+    font-size: 1.15rem;
+}
+
+#contextual-questionnaire > p {
+    color: #a7b7cb;
+    font-size: 0.9rem;
+}
+
+/* Questionnaire field labels */
+#contextual-form label {
+    display: block;
+    margin: 22px 0 10px;
+    color: #edf4ff;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Questionnaire dropdown menus */
+#contextual-form select {
+    display: block;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #2b4059;
+    border-radius: 10px;
+    background: #091522;
+    color: #edf4ff;
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Highlight the active dropdown */
+#contextual-form select:focus {
+    border-color: #57a6ff;
+    box-shadow: 0 0 0 3px rgba(87, 166, 255, 0.12);
+}
+
+/* Submit contextual assessment */
+#submit-context-btn {
+    margin-top: 26px;
+    padding: 14px 20px;
+    background: #3188f5;
+    color: #ffffff;
+    font-weight: 650;
+}
+
+/* Prevent repeated submissions */
+#submit-context-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Enhanced assessment results */
+#contextual-results {
+    margin-top: 26px;
+    padding: 22px;
+    border: 1px solid rgba(53, 201, 154, 0.3);
+    border-radius: 12px;
+    background: #091522;
+}
+
+#contextual-results h3 {
+    margin-top: 0;
+    color: #edf4ff;
+    font-size: 1.1rem;
+}
+
+#contextual-results h4 {
+    margin: 22px 0 12px;
+    color: #a7d1ff;
+    font-size: 0.95rem;
+}
+
+/* Main contextual interpretation */
+#contextual-assessment-text {
+    color: #edf4ff !important;
+    line-height: 1.8;
+}
+
+/* Contextual observations */
+#contextual-observations {
+    padding-left: 22px;
+    color: #a7b7cb;
+    line-height: 1.8;
+}
+
+#contextual-observations li {
+    margin-bottom: 8px;
+}
+
+/* Assessment disclaimer */
+#contextual-disclaimer {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid #2a405b;
+    color: #8294aa !important;
+    font-size: 0.8rem;
+    line-height: 1.7;
+}
+
+/* Preserve the hidden state of contextual elements */
+#contextual-questionnaire[hidden],
+#contextual-results[hidden] {
+    display: none;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 560px) {
+    .contextual-section {
+        padding: 18px;
+    }
+
+    #contextual-results {
+        padding: 16px;
+    }
+
+    #enhanced-analysis-btn,
+    #submit-context-btn {
+        width: 100%;
+    }
+}

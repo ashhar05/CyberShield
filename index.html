@@ -96,6 +96,118 @@
 
 <p id="report-feedback" class="feedback" aria-live="polite"></p>
 
+    
+<!-- CyberShield Enhanced Analysis -->
+<div class="contextual-section">
+
+    <div class="contextual-intro">
+        <h3>Want a deeper contextual assessment?</h3>
+
+        <p>
+            AI-generated scores cannot capture every detail of a
+            conversation. Answer four optional questions to help
+            CyberShield consider the circumstances surrounding it.
+        </p>
+
+        <button id="enhanced-analysis-btn" type="button">
+            Get Enhanced Analysis →
+        </button>
+    </div>
+
+    <!-- Hidden until the user requests enhanced analysis -->
+    <div id="contextual-questionnaire" hidden>
+
+        <h3>Tell us about your experience</h3>
+
+        <p>
+            Your answers will help generate a contextual
+            interpretation of the conversation.
+        </p>
+
+        <form id="contextual-form">
+
+            <!-- Question 1: Emotional impact -->
+            <label for="emotional-impact">
+                1. How did this interaction make you feel?
+            </label>
+
+            <select id="emotional-impact" required>
+                <option value="">Select an answer</option>
+                <option value="threatened">Threatened or unsafe</option>
+                <option value="hurt">Hurt or upset</option>
+                <option value="uncomfortable">Uncomfortable</option>
+                <option value="unaffected">Unaffected</option>
+            </select>
+
+            <!-- Question 2: Relationship -->
+            <label for="relationship">
+                2. What is your relationship with the sender?
+            </label>
+
+            <select id="relationship" required>
+                <option value="">Select an answer</option>
+                <option value="friend">Friend</option>
+                <option value="acquaintance">Acquaintance</option>
+                <option value="stranger">Stranger</option>
+                <option value="repeated_targeting">
+                    Someone who repeatedly targets me
+                </option>
+            </select>
+
+            <!-- Question 3: Repetition -->
+            <label for="repetition">
+                3. Has similar behavior happened before?
+            </label>
+
+            <select id="repetition" required>
+                <option value="">Select an answer</option>
+                <option value="once">No, this happened once</option>
+                <option value="repeated">Yes, repeatedly</option>
+                <option value="unsure">I'm not sure</option>
+            </select>
+
+            <!-- Question 4: Perceived intention -->
+            <label for="intention">
+                4. How do you interpret the sender's intention?
+            </label>
+
+            <select id="intention" required>
+                <option value="">Select an answer</option>
+                <option value="joking">Friendly joking</option>
+                <option value="harassment">Harassment</option>
+                <option value="intimidation">Intimidation</option>
+                <option value="unclear">Unclear</option>
+            </select>
+
+            <button id="submit-context-btn" type="submit">
+                Generate Contextual Assessment →
+            </button>
+
+        </form>
+
+        <p id="contextual-feedback"
+           class="feedback"
+           aria-live="polite"></p>
+
+        <!-- Flask contextual analysis results appear here -->
+        <div id="contextual-results" hidden>
+
+            <h3>Enhanced Assessment Results</h3>
+
+            <p id="contextual-assessment-text"></p>
+
+            <h4>Contextual Observations</h4>
+
+            <ul id="contextual-observations"></ul>
+
+            <p id="contextual-disclaimer"></p>
+
+        </div>
+
+    </div>
+
+</div>
+
     <p class="result-note">
         These are model-generated scores, not confirmed probabilities
         of cyberbullying. Review the message and its context before

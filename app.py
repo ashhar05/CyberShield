@@ -9,6 +9,7 @@ import json
 import tempfile
 from flask import send_file
 from report import generate_report
+from contextual import assess_context
 
 app = Flask(__name__)
 
@@ -75,9 +76,88 @@ def analyze_message():
         }), 500
 
 
+@app.route("/api/contextual-analyze", methods=["POST"])
+def contextual_analyze():
+
+    # Receive JSON data from frontend
+    data = request.get_json(silent=True)
+
+    # Validate JSON request
+    if not isinstance(data, dict):
+        return jsonify({
+            "status": "error",
+            "message": "Please provide a valid JSON object."
+        }), 400
+
+    message = data.get("message", "")
+    context = data.get("context", {})
+
+    # Validate submitted conversation
+    if not isinstance(message, str) or not message.strip():
+        return jsonify({
+            "status": "error",
+            "message": "Please provide a valid message."
+        }), 400
+
+    # Validate contextual questionnaire
+    if not isinstance(context, dict):
+        return jsonify({
+            "status": "error",
+            "message": "Invalid contextual information."
+        }), 400
+
+    # Define the accepted answers for each question
+    allowed_answers = {
+        "emotional_impact": {
+            "threatened", "hurt", "uncomfortable", "unaffected"
+        },
+        "relationship": {
+            "friend", "acquaintance", "stranger",
+            "repeated_targeting"
+        },
+        "repetition": {
+            "once", "repeated", "unsure"
+        },
+        "intention": {
+            "joking", "harassment", "intimidation", "unclear"
+        }
+    }
+
+    # Validate every questionnaire response
+    for question, valid_answers in allowed_answers.items():
+
+        answer = context.get(question)
+
+        if not isinstance(answer, str) or answer not in valid_answers:
+            return jsonify({
+                "status": "error",
+                "message": f"Invalid or missing answer: {question}"
+            }), 400
+
+    try:
+        # Reanalyze the message using the original ML model
+        # This avoids trusting scores supplied by the browser
+        analysis = analyze_text(message.strip())
+
+        # Generate contextual interpretation
+        enhanced_results = assess_context(analysis, context)
+
+        return jsonify({
+            "status": "success",
+            "message": "Enhanced analysis completed successfully!",
+            "enhanced_analysis": enhanced_results
+        })
+
+    except Exception as error:
+        print("Contextual analysis error:", error)
+
+        return jsonify({
+            "status": "error",
+            "message": "Something went wrong during enhanced analysis."
+        }), 500
+
+
 @app.route("/api/extract", methods=["POST"])
-
-
 def extract_image_text():
 
     # Check whether an image was uploaded
